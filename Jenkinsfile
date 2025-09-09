@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        registry = "yourdockerhubusername/cicd-pipeline-app"
+        registry = "admin/jiya" 
         registryCredential = 'dockerhub'
         dockerImage = ''
     }
@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('Cloning Git') {
             steps {
-                git 'https://github.com/yourusername/cicd-pipeline-lab.git'
+                git 'https://github.com/yourusername/yourrepository.git'
             }
         }
         stage('Building Docker Image') {
