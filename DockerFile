@@ -1,0 +1,20 @@
+# Use Node.js official image
+FROM node:latest
+
+# Set working directory
+WORKDIR /usr/src/app
+
+# Copy dependency files first
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy all app files
+COPY . .
+
+# Expose port
+EXPOSE 8888
+
+# Run app
+CMD ["node", "app.js"]
