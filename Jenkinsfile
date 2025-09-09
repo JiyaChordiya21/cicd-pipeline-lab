@@ -1,0 +1,51 @@
+pipeline {
+    agent any
+
+    environment {
+        registry = "yourdockerhubusername/cicd-pipeline-app"
+        registryCredential = 'dockerhub'
+        dockerImage = ''
+    }
+
+    stages {
+        stage('Cloning Git') {
+            steps {
+                git 'https://github.com/yourusername/cicd-pipeline-lab.git'
+            }
+        }
+        stage('Building Docker Image') {
+            steps {
+                script {
+                    dockerImage = docker.build registry
+                }
+            }
+        }
+        stage('Security Scan') {
+            steps {
+                script {
+                    sh 'docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image ${registry}'
+                }
+            }
+        }
+        stage('Deploying Image') {
+            steps {
+                script {
+                    docker.withRegistry('', registryCredential) {
+                        dockerImage.push()
+                    }
+                }
+            }
+        }
+        stage('Clean up') {
+            steps {
+                sh "docker rmi ${registry}"
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()
+        }
+    }
+}
